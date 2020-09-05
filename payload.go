@@ -47,7 +47,7 @@ func (p *Payload) GetJSONType() JSONType { return p.jsonType }
 func (p *Payload) with(t JSONType, defaultF PayloadFactory, f ...PayloadFactory,
 ) *Payload {
 	if len(f) > 0 {
-		p.factory[Boolean] = f[0]
+		p.factory[t] = f[0]
 	} else {
 		p.factory[t] = defaultF
 	}

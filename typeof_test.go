@@ -202,7 +202,7 @@ func TestTypeOf_Response(t *testing.T) {
 				if string(b) != TypeOfTests_Response[i].MarshaledBack {
 					t.Fatalf("Failed marshaling back\nWant MarshalBack: %s\n"+
 						" Got MarshalBack: %s",
-						TypeOfTests_Response[i].MarshaledBack, string(b))
+						TypeOfTests_Response[i].MarshaledBack, b)
 				}
 			}
 		}(i))
@@ -312,8 +312,8 @@ func TestTypeOf_Raw(t *testing.T) {
 						"\n Got Error: %s", TypeOfTests_Raw[i].Error, strErr)
 				}
 				if jType != TypeOfTests_Raw[i].JSONType {
-					t.Fatalf("Unexpected JSON Data Type\nWant Type: %s"+
-						"\n Got Type: %s", TypeOfTests_Raw[i].Error, strErr)
+					t.Fatalf("Unexpected JSON Data Type\nWant Type: %d"+
+						"\n Got Type: %d", TypeOfTests_Raw[i].JSONType, jType)
 				}
 			}
 		}(i))
