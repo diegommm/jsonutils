@@ -97,7 +97,7 @@ func NewPeopleResponse() *Response {
 	return &Response{Data: &People{}}
 }
 
-var TypeOfTests_Response = []struct {
+var TypeOfTestsResponse = []struct {
 	Name          string
 	Payload       []byte
 	Response      interface{}
@@ -180,36 +180,36 @@ var TypeOfTests_Response = []struct {
 
 func TestTypeOf_Response(t *testing.T) {
 	t.Parallel()
-	for i := range TypeOfTests_Response {
-		t.Run(TypeOfTests_Response[i].Name, func(i int) func(*testing.T) {
+	for i := range TypeOfTestsResponse {
+		t.Run(TypeOfTestsResponse[i].Name, func(i int) func(*testing.T) {
 			return func(t *testing.T) {
 				t.Parallel()
 				var strErr string
-				r := TypeOfTests_Response[i].Response
-				err := json.Unmarshal(TypeOfTests_Response[i].Payload, r)
+				r := TypeOfTestsResponse[i].Response
+				err := json.Unmarshal(TypeOfTestsResponse[i].Payload, r)
 				if err != nil {
 					strErr = err.Error()
 				}
-				if strErr != TypeOfTests_Response[i].Error {
+				if strErr != TypeOfTestsResponse[i].Error {
 					t.Fatalf("Unexpected marshal error\nWant Error: %s"+
-						"\n Got Error: %s", TypeOfTests_Response[i].Error,
+						"\n Got Error: %s", TypeOfTestsResponse[i].Error,
 						strErr)
 				}
 				b, err := json.Marshal(r)
 				if err != nil {
 					t.Fatalf("Unexpected error while marshaling: %v", err)
 				}
-				if string(b) != TypeOfTests_Response[i].MarshaledBack {
+				if string(b) != TypeOfTestsResponse[i].MarshaledBack {
 					t.Fatalf("Failed marshaling back\nWant MarshalBack: %s\n"+
 						" Got MarshalBack: %s",
-						TypeOfTests_Response[i].MarshaledBack, b)
+						TypeOfTestsResponse[i].MarshaledBack, b)
 				}
 			}
 		}(i))
 	}
 }
 
-var TypeOfTests_Raw = []struct {
+var TypeOfTestsRow = []struct {
 	Name    string
 	Payload []byte
 	JSONType
@@ -248,7 +248,7 @@ var TypeOfTests_Raw = []struct {
 		Name:     "Invalid Token",
 		Payload:  json.RawMessage(`!`),
 		JSONType: Invalid,
-		Error:    `invalid character '!' looking for beginning of value`,
+		Error:    `unknown type`,
 	}, //*/
 
 	{
@@ -286,6 +286,43 @@ var TypeOfTests_Raw = []struct {
 		Error:    ``,
 	}, //*/
 
+	{
+		Name: "Max Float64",
+		Payload: json.RawMessage(`1.797693134862315708145274237317043567981` +
+			`e+308`),
+		JSONType: Number,
+		Error:    ``,
+	}, //*/
+
+	{
+		Name: "Smallest non-zero Float64",
+		Payload: json.RawMessage(`4.940656458412465441765687928682213723651` +
+			`e-324`),
+		JSONType: Number,
+		Error:    ``,
+	}, //*/
+
+	{
+		Name:     "Min Int64",
+		Payload:  json.RawMessage(`-9223372036854775808`),
+		JSONType: Number,
+		Error:    ``,
+	}, //*/
+
+	{
+		Name:     "Max Int64",
+		Payload:  json.RawMessage(`9223372036854775807`),
+		JSONType: Number,
+		Error:    ``,
+	}, //*/
+
+	{
+		Name:     "Max Uint64",
+		Payload:  json.RawMessage(`18446744073709551615`),
+		JSONType: Number,
+		Error:    ``,
+	}, //*/
+
 	/* Template
 	{
 		Name:     "",
@@ -298,22 +335,22 @@ var TypeOfTests_Raw = []struct {
 
 func TestTypeOf_Raw(t *testing.T) {
 	t.Parallel()
-	for i := range TypeOfTests_Raw {
-		t.Run(TypeOfTests_Raw[i].Name, func(i int) func(*testing.T) {
+	for i := range TypeOfTestsRow {
+		t.Run(TypeOfTestsRow[i].Name, func(i int) func(*testing.T) {
 			return func(t *testing.T) {
 				t.Parallel()
 				var strErr string
-				jType, err := TypeOf(TypeOfTests_Raw[i].Payload)
+				jType, err := TypeOf(TypeOfTestsRow[i].Payload)
 				if err != nil {
 					strErr = err.Error()
 				}
-				if strErr != TypeOfTests_Raw[i].Error {
+				if strErr != TypeOfTestsRow[i].Error {
 					t.Fatalf("Unexpected marshal error\nWant Error: %s"+
-						"\n Got Error: %s", TypeOfTests_Raw[i].Error, strErr)
+						"\n Got Error: %s", TypeOfTestsRow[i].Error, strErr)
 				}
-				if jType != TypeOfTests_Raw[i].JSONType {
+				if jType != TypeOfTestsRow[i].JSONType {
 					t.Fatalf("Unexpected JSON Data Type\nWant Type: %d"+
-						"\n Got Type: %d", TypeOfTests_Raw[i].JSONType, jType)
+						"\n Got Type: %d", TypeOfTestsRow[i].JSONType, jType)
 				}
 			}
 		}(i))
@@ -326,20 +363,4 @@ type typeOfJSONDecoderMock struct {
 
 func (m typeOfJSONDecoderMock) Token() (json.Token, error) {
 	return struct{}{}, nil
-}
-
-func TestTypeOf_JSONDecoderMock(t *testing.T) {
-	t.Parallel()
-
-	typeOFMocked := typeOfFromBytes(func([]byte) jsonDecoder {
-		return typeOfJSONDecoderMock{}
-	})
-
-	jType, err := typeOFMocked([]byte("whatever"))
-	if jType != Invalid {
-		t.Fatalf("expected Invalid type. Got: %v", jType)
-	}
-	if err != ErrUnknownType {
-		t.Fatalf("expected %v error. Got: %v", ErrUnknownType, err)
-	}
 }
