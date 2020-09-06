@@ -11,6 +11,7 @@ type Error string
 
 func (e Error) Error() string { return string(e) }
 
+// Errors defined by the package.
 const (
 	ErrEmpty          Error = "empty input"
 	ErrUnknownType    Error = "unknown type"
@@ -20,6 +21,7 @@ const (
 // JSONType identifies one of the stardad JSON Data Types.
 type JSONType uint8
 
+// Standard JSON types.
 const (
 	// Invalid is not a JSON Data Type but it's used for control purposes in
 	// this package (like signaling errors or uninitialized values).
