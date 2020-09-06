@@ -17,7 +17,7 @@ func withString() interface{}  { return new(string) }
 func withArray() interface{}   { return new([]interface{}) }
 func withObject() interface{}  { return new(map[string]interface{}) }
 
-// Payload allows easy implementation of multiple JSON types.
+// Payload allows easy implementation of multiple JSON Data Types unmarshalers.
 //
 // Restrictions:
 //	- Copying and passing by value is not allowed. Use pointers.
@@ -183,6 +183,7 @@ func (p *Payload) WithObject(f ...PayloadFactory) *Payload {
 // UnmarshalJSON implements the JSON Unmarshaler interface.
 func (p *Payload) UnmarshalJSON(b []byte) error {
 	var err error
+	p.Data, p.jsonType = nil, Invalid
 
 	p.jsonType, err = TypeOf(b)
 	if err != nil {
