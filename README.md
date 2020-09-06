@@ -2,7 +2,7 @@
 
 Utilities to handle JSON encoded data
 
-## Determine JSON Data Type
+## Conditional unmarshaling
 
 Sometimes we receive JSON requests/responses and the API we're hitting (or clients hitting our API) use a general structure that could be modeled like this:
 ```go
@@ -76,7 +76,8 @@ case jsonutils.Object:
     }
 }
 ```
+The `json.Unmarshal` will correctly parse the value in the `data` element but will not perform any unmarshaling, avoiding expensive reflection calls until we know how to deal with the contents. The `TypeOf` function is very accurate and in many cases it just needs to see a handful of bytes in the worst case.
 
-## Variable-type payloads
+## Conditional unmarshaler
 
 TODO
