@@ -37,7 +37,7 @@ func ExamplePayload() {
 
 	respPreamble, repEpilogue := `{"status":200,"data":`, `}`
 
-	// Excercise some payloads
+	// Exercise some payloads
 	payloads := map[string][]byte{
 		"success": []byte(respPreamble + `{"id":120,"username":"diegommm",` +
 			`"email":"diegoaugustomolina@gmail.com"}` + repEpilogue),
