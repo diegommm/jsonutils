@@ -4,13 +4,15 @@ Utilities to handle JSON encoded data
 
 ## Determine JSON Data Type
 
-Sometimes we receive JSON requests/responses from the internet and the API we're hitting (or clients hitting our API) always sends us a structure that could be modeled like this:
+Sometimes we receive JSON requests/responses and the API we're hitting (or clients hitting our API) use a general structure that could be modeled like this:
 ```go
 type Response struct {
 	Data   interface{} `json:"data"`
 	Status int         `json:"status"`
 }
 ```
+(Of course, this is just illustrative.)
+
 And it can get a bit clunky to just leave it like a `map[string]interface{}` in case we get an object, or maybe a `[]interface{}` if it's an array or even just a plain `string`. We may want to validate the structure of what we're about to receive.
 
 Let's say that we are making request to an API that lists objects of type `User`. The `User` model could look like this:
@@ -33,16 +35,16 @@ One match:
 ```
 More than one match:
 ```json
-{"status":200,"data":[{"id":123,"username":"johndoe","email":"john@doe.com"},{"id":321,"username":"jeanndoe","email":"jean@doe.com"}]}
+{"status":200,"data":[{"id":123,"username":"johndoe","email":"john@doe.com"},{"id":321,"username":"jeandoe","email":"jean@doe.com"}]}
 ```
-The `TypeOf` function allows inspects the first bytes of a `[]byte` to try to guess the JSON Data Type held in it and returns a constant and an error. We can use this function modifying the initial `Response` struct like the following:
+The `TypeOf` function inspects the first bytes of a `[]byte` to guess the JSON Data Type held in it and returns a constant and an error. We can use this function and use a modified `Response` like the following:
 ```go
 type Response struct {
 	Data   json.RawMessage `json:"data"`
 	Status int             `json:"status"`
 }
 ```
-This type will instruct the JSON unmarshaler to store the raw bytes corresponding to that specific field instead of decoding them. Our decoding routine now can look something like this:
+The `json.RawMessage` will instruct the JSON standard unmarshaler to store the raw bytes corresponding to that specific field instead of decoding them. Our decoding routine now can look something like this:
 ```go
 // first unmarshaling round.
 resp := new(Response)
