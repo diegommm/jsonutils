@@ -126,7 +126,7 @@ func (p *Payload) WithInt() *Payload {
 	return p.with(Number, withInt)
 }
 
-// WithInt specifies that it is acceptable for the payload to be a number and
+// WithUint specifies that it is acceptable for the payload to be a number and
 // that that number should be a non-negative integer which will be mapped to an
 // *uint64.
 //
