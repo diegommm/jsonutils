@@ -93,14 +93,15 @@ type jsonDecoder interface {
 	UseNumber()
 }
 
-// Embed this type into a struct, which mustn't be copied, so `go vet` gives a
+// Embed this type into a struct, which mustn't be copied, so go vet gives a
 // warning if this struct is copied.
 //
 // For details, see:
 //     https://github.com/golang/go/issues/8005#issuecomment-190753527
 //     https://stackoverflow.com/questions/52494458/nocopy-minimal-example
 //
-type noCopy struct{}    //nolint:unused
+type noCopy struct{}
+
 func (*noCopy) Lock()   {}
 func (*noCopy) Unlock() {}
 
@@ -113,8 +114,8 @@ var (
 	bFalse = []byte{'f', 'a', 'l', 's', 'e'}
 )
 
-// bytesToString converts from []byte to string with no memeroy allocation.
-// Caould eventually break if headers for slice or string types are modified.
+// bytesToString converts from []byte to string with no memory allocation.
+// Could eventually break if headers for slice or string types are modified.
 // See:
 // 	https://groups.google.com/forum/#!msg/Golang-Nuts/ENgbUzYvCuU/90yGx7GUAgAJ
 func bytesToString(b []byte) string {

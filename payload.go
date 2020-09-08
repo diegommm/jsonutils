@@ -15,12 +15,12 @@ type PayloadFactory = func() interface{}
 
 // WithDefaultArray is the default PayloadFactory for JSON Array.
 //
-// This simply returns `new([]interface{})`.
+// This simply returns new([]interface{}).
 func WithDefaultArray() interface{} { return new([]interface{}) }
 
 // WithDefaultObject is the default PayloadFactory for JSON Object.
 //
-// This simply returns `new(map[string]interface{})`.
+// This simply returns new(map[string]interface{}).
 func WithDefaultObject() interface{} { return new(map[string]interface{}) }
 
 // Payload allows easy implementation of variable JSON Data Type unmarshalers.
@@ -157,7 +157,7 @@ func (p *Payload) UnmarshalJSON(b []byte) error {
 
 	case Boolean:
 		p.mapping = GoBool
-		p.pBool = bytes.Compare(bTrue, b) == 0
+		p.pBool = bytes.Equal(bTrue, b)
 	}
 
 	if err != nil {

@@ -27,13 +27,13 @@ func (t *Tags) UnmarshalJSON(b []byte) error {
 	switch jType, err := TypeOf(b); {
 	case err != nil:
 		return err
-	default:
-		return ErrUnknownType
 	case jType == Object:
 		*t = append(*t, Tag{})
 		res = &(*t)[0]
 	case jType == Array:
 		res = (*[]Tag)(t)
+	default:
+		return ErrUnknownType
 	}
 
 	if err := json.Unmarshal(b, res); err != nil {
@@ -68,8 +68,6 @@ func (p *People) UnmarshalJSON(b []byte) error {
 	switch jType, err := TypeOf(b); {
 	case err != nil:
 		return err
-	default:
-		return ErrUnknownType
 	case jType == Object:
 		*p = append(*p, Person{})
 		res = &(*p)[0]
@@ -81,6 +79,8 @@ func (p *People) UnmarshalJSON(b []byte) error {
 	case jType == Number:
 		*p = append(*p, Person{})
 		res = &(*p)[0].Age
+	default:
+		return ErrUnknownType
 	}
 
 	if err := json.Unmarshal(b, res); err != nil {
@@ -355,12 +355,4 @@ func TestTypeOf_Raw(t *testing.T) {
 			}
 		}(i))
 	}
-}
-
-type typeOfJSONDecoderMock struct {
-	jsonDecoder
-}
-
-func (m typeOfJSONDecoderMock) Token() (json.Token, error) {
-	return struct{}{}, nil
 }

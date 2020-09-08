@@ -2,15 +2,15 @@ package jsonutils
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 )
 
 func ExamplePayload() {
 	// This is intends to be a possible depiction of an API service.
 
 	// Generic response type. Errors can be _fatal_ or _mon-fatal_. In the first
-	// case, `data` will be set to `null` and `error` will not be present. In
-	// the latter, `data` will be set to `null` and `error` will specify the
+	// case, data will be set to null and error will not be present. In
+	// the latter, data will be set to null and error will specify the
 	// reason.
 	//
 	// A fatal error happens when the API Server cannot respond to a request due
@@ -59,44 +59,52 @@ func ExamplePayload() {
 
 	// Successful response example.
 	if err := json.Unmarshal(payloads["success"], &GetUser); err != nil {
-		log.Fatalf("unexpected error decoding JSON (success): %v", err)
+		fmt.Printf("unexpected error decoding JSON (success): %v", err)
+		return
 	}
 	if _, ok := GetUser.Payload.GetObject().(*User); !ok {
-		log.Fatalf("unexpected decoded data from JSON (want: User): %v",
+		fmt.Printf("unexpected decoded data from JSON (want: User): %v",
 			GetUser.Payload)
+		return
 	}
 
 	// Alternative successful response example, with string.
 	if err := json.Unmarshal(payloads["string"], &GetUser); err != nil {
-		log.Fatalf("unexpected error decoding JSON (string): %v", err)
+		fmt.Printf("unexpected error decoding JSON (string): %v", err)
+		return
 	}
 	s := respPreamble + "\"" + GetUser.Payload.GetString() + "\"" + respEpilogue
 	if s != string(payloads["string"]) {
-		log.Fatalf("unexpected decoded data from JSON: Want: %s; Got: %s",
+		fmt.Printf("unexpected decoded data from JSON: Want: %s; Got: %s",
 			payloads["string"], s)
+		return
 	}
 
 	// Unsuccessful response example, receive null.
 	if err := json.Unmarshal(payloads["error"], &GetUser); err != nil {
-		log.Fatalf("unexpected error decoding JSON (null): %v", err)
+		fmt.Printf("unexpected error decoding JSON (null): %v", err)
+		return
 	}
 	// As here we are using a pointer to Payload inside another struct then the
 	// JSON Unmarshaler will set this pointer to nil. If we were not using a
 	// pointer then we could use the IsNil method.
 	if GetUser.Payload != nil {
-		log.Fatalf("unexpected decoded data from JSON (want: nil): %#v",
+		fmt.Printf("unexpected decoded data from JSON (want: nil): %#v",
 			GetUser.Payload)
+		return
 	}
 
 	// Unexpected data type: Number
 	err := json.Unmarshal(payloads["unexpected"], &GetUser)
 	if err != ErrUnexpectedType {
-		log.Fatalf("unexpected error decoding JSON (want: ErrUnexpectedType)"+
+		fmt.Printf("unexpected error decoding JSON (want: ErrUnexpectedType)"+
 			": %v", err)
+		return
 	}
 	if GetUser.Payload.GetJSONType() != Number {
-		log.Fatalf("unexpected decoded data from JSON (want: Numbaer): %#v",
+		fmt.Printf("unexpected decoded data from JSON (want: Numbaer): %#v",
 			GetUser.Payload)
+		return
 	}
 
 	// Output:

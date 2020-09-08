@@ -5,6 +5,8 @@ import "testing"
 func TestUtils(t *testing.T) {
 	var m GoMapping
 	var panicVal interface{}
+	var dummy noCopy
+	dummy.Lock() // nop
 
 	func() {
 		defer func() {
@@ -27,7 +29,5 @@ func TestUtils(t *testing.T) {
 			e)
 	}
 
-	var dummy noCopy
-	dummy.Lock()
 	dummy.Unlock()
 }
