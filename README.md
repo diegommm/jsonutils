@@ -137,7 +137,7 @@ func GetUsers() ([]User, error) {
 }
 ```
 </details>
-There you go! Now you can reuse your structure and you don't have to write custom unmarshalers or, even worse, guess by unmarshaling iteratevly until you hit your expected structure.
+There you go! Now you can reuse your structure and you don't have to write custom unmarshalers or, even worse, guess by unmarshaling iteratively until you hit your expected structure.
 
 ### Limitations
 
