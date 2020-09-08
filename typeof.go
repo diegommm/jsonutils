@@ -5,18 +5,12 @@ import (
 	"strconv"
 )
 
-var (
-	bNull  = []byte{'n', 'u', 'l', 'l'}
-	bTrue  = []byte{'t', 'r', 'u', 'e'}
-	bFalse = []byte{'f', 'a', 'l', 's', 'e'}
-)
-
 // TypeOf determines the JSON Data Type of the specified []byte. This comes in
 // handy when needing to decode variable type responses.
 //
 func TypeOf(jsonBytes []byte) (JSONType, error) {
 	if len(jsonBytes) == 0 {
-		return Invalid, ErrEmpty
+		return InvalidJSON, ErrEmpty
 	}
 
 	// See the tip of the next token to avoid decoding expensive values.
@@ -42,5 +36,5 @@ func TypeOf(jsonBytes []byte) (JSONType, error) {
 		return Number, nil
 	}
 
-	return Invalid, ErrUnknownType
+	return InvalidJSON, ErrUnknownType
 }

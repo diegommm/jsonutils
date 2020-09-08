@@ -219,7 +219,7 @@ var TypeOfTestsRow = []struct {
 	{
 		Name:     "Empty payload",
 		Payload:  nil,
-		JSONType: Invalid,
+		JSONType: InvalidJSON,
 		Error:    ErrEmpty.Error(),
 	}, //*/
 
@@ -247,7 +247,7 @@ var TypeOfTestsRow = []struct {
 	{
 		Name:     "Invalid Token",
 		Payload:  json.RawMessage(`!`),
-		JSONType: Invalid,
+		JSONType: InvalidJSON,
 		Error:    `unknown type`,
 	}, //*/
 
@@ -327,7 +327,7 @@ var TypeOfTestsRow = []struct {
 	{
 		Name:     "",
 		Payload:  json.RawMessage(``),
-		JSONType: Invalid,
+		JSONType: InvalidJSON,
 		Error:    ``,
 	}, //*/
 
