@@ -99,7 +99,7 @@ We will stick to the previous example where we could get a JSON Array, Object or
 	
 ```go
 func GetUsers() ([]User, error) {
-	var b [] byte
+	var b []byte
 	// Make your API call and get data into b.
 
 	// Create your response.
