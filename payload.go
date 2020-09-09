@@ -60,8 +60,9 @@ type Payload struct {
 	pString string
 
 	// Array and Object Payloads
-	otherFactory PayloadFactory
-	pOther       interface{}
+	arrayFactory  PayloadFactory
+	objectFactory PayloadFactory
+	pOther        interface{}
 }
 
 // AcquirePayload returns a new Payload from the internal pool.
@@ -101,7 +102,8 @@ func (p *Payload) Reset() {
 	for i := range p.with {
 		p.with[i] = false
 	}
-	p.otherFactory = nil
+	p.arrayFactory = nil
+	p.objectFactory = nil
 	p.numType = GoInvalidMapping
 }
 
@@ -132,9 +134,14 @@ func (p *Payload) UnmarshalJSON(b []byte) error {
 	}
 
 	switch p.jsonType {
-	case Object, Array:
+	case Array:
 		p.mapping = GoOther
-		p.pOther = p.otherFactory()
+		p.pOther = p.arrayFactory()
+		err = json.Unmarshal(b, p.pOther)
+
+	case Object:
+		p.mapping = GoOther
+		p.pOther = p.objectFactory()
 		err = json.Unmarshal(b, p.pOther)
 
 	case Null:
@@ -358,12 +365,6 @@ func (p *Payload) WithUint(enable ...bool) *Payload {
 	return p.withNum(GoUint, enable...)
 }
 
-func (p *Payload) withOther(t JSONType, f ...PayloadFactory) *Payload {
-	p.with[t] = f[0] != nil
-	p.otherFactory = f[0]
-	return p
-}
-
 // WithArray configures the Payload to accept a JSON Array value (disabled by
 // default).
 //
@@ -373,7 +374,10 @@ func (p *Payload) withOther(t JSONType, f ...PayloadFactory) *Payload {
 //		Go pointer that will be used by the encoding/json Unmarshaler to hold
 //		the JSON Array.
 func (p *Payload) WithArray(f ...PayloadFactory) *Payload {
-	return p.withOther(Array, append(f, WithDefaultArray)...)
+	f = append(f, WithDefaultArray)
+	p.with[Array] = f[0] != nil
+	p.arrayFactory = f[0]
+	return p
 }
 
 // WithObject configures the Payload to accept a JSON Object value (disabled by
@@ -385,5 +389,8 @@ func (p *Payload) WithArray(f ...PayloadFactory) *Payload {
 //		Go pointer that will be used by the encoding/json Unmarshaler to hold
 //		the JSON Object.
 func (p *Payload) WithObject(f ...PayloadFactory) *Payload {
-	return p.withOther(Object, append(f, WithDefaultObject)...)
+	f = append(f, WithDefaultObject)
+	p.with[Object] = f[0] != nil
+	p.objectFactory = f[0]
+	return p
 }
