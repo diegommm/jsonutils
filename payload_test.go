@@ -161,6 +161,16 @@ var TestsPayloadRaw = []PayloadTest{
 		GoMapping:     GoInvalidMapping,
 	}, //*/
 
+	{
+		Name:          "Bugfix: array and object factory overwrite each other",
+		JSONData:      []byte(`{"some":"data"}`),
+		Payload:       AcquirePayload().WithObject().WithArray(),
+		Error:         "",
+		MarshaledBack: `{"some":"data"}`,
+		JSONType:      Object,
+		GoMapping:     GoOther,
+	}, //*/
+
 	/* Template
 	{
 		Name:          "",
